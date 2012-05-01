@@ -162,6 +162,7 @@ public class Sudoku
 	 */
 	public Boolean solve()
 	{
+		runSinglePos();
 		solved = this.runBruteForce();
 		return this.isSolved();
 	}
@@ -303,5 +304,49 @@ public class Sudoku
 		} // while
 
 		return true;
+	}
+
+	/*
+	 *	Easy Technique #1 (and #2): Single Position (and Single Candidate)
+	 */
+	private void runSinglePos()
+	{
+		int numSinglePos = 0;
+		int singleRow = 0, singleCol = 0, singleVal = 0;
+
+		do {
+			numSteps++;
+			numSinglePos = 0;
+
+			// finds all the entries that have only one possibility
+			for (int rowNum = 0; rowNum < 9; rowNum++) {
+				for (int colNum = 0; colNum < 9; colNum++) {
+					if (numPossibleValues[rowNum,colNum] == 1)
+					{
+						numSinglePos++;
+
+						// gets the first single entry
+						if (numSinglePos == 1) {
+							singleRow = rowNum;
+							singleCol = colNum;
+							
+							for (int entryNum = 0; entryNum < 9; entryNum++) {
+								if (isValid(singleRow, singleCol, entryNum+1)) {
+									singleVal = entryNum + 1;
+								}
+							}
+
+						}
+					}
+				}
+			}
+
+			// no single possibilities found, so end do while loop
+			if (numSinglePos == 0) break;
+
+			// adds the first single entry found
+			addEntry(singleRow, singleCol, singleVal);
+
+		} while (numSinglePos > 0);
 	}
 }
